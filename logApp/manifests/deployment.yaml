@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: log-app
+  labels:
+    app: log-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: log-app
+  template:
+    metadata:
+      name: log-app
+      labels:
+        app: log-app
+    spec:
+      containers:
+        - name: log-app
+          image: log-app:1.0
+          imagePullPolicy: Never
