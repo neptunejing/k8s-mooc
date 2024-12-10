@@ -1,0 +1,15 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ping-pong-app-ingress
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /pingpong
+            pathType: Prefix
+            backend:
+              service:
+                name: ping-pong-app-svc
+                port:
+                  number: 2500
