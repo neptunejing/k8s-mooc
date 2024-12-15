@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: log-app
+  labels:
+    app: log-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: log-app
+  template:
+    metadata:
+      labels:
+        app: log-app
+    spec:
+      volumes:
+        - name: shared-log
+          emptyDir: { }
+      containers:
+        - name: log-app
+          image: nepjnq/log-app:1.2
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: shared-log
+              mountPath: /app/files
+        - name: log-writer
+          image: nepjnq/log-writer:1.0
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: shared-log
+              mountPath: /app/files

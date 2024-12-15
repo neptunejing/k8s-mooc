@@ -1,21 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: log-app
+  name: log-writer
   labels:
-    app: log-app
+    app: log-writer
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: log-app
+      app: log-writer
   template:
     metadata:
-      name: log-app
+      name: log-writer
       labels:
-        app: log-app
+        app: log-writer
     spec:
       containers:
-        - name: log-app
-          image: nepjnq/log-app:1.2
+        - name: log-writer
+          image: nepjnq/log-writer:1.0
           imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+      
