@@ -7,6 +7,11 @@ spec:
   selector:
     app: ping-pong-app
   ports:
-    - protocol: TCP
+    - name: ping-pong-app
+      protocol: TCP
       port: 2500
       targetPort: 8080
+    - name: log-app
+      protocol: TCP
+      port: 2600
+      targetPort: 8090

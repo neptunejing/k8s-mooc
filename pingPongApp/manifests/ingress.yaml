@@ -13,3 +13,10 @@ spec:
                 name: ping-pong-app-svc
                 port:
                   number: 2500
+          - path: /log
+            pathType: Prefix
+            backend:
+              service:
+                name: ping-pong-app-svc
+                port:
+                  number: 2600

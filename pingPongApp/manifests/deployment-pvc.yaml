@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ping-pong-app
+  labels:
+    app: ping-pong-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ping-pong-app
+  template:
+    metadata:
+      name: ping-pong-app
+      labels:
+        app: ping-pong-app
+    spec:
+      volumes:
+        - name: shared-log
+          persistentVolumeClaim:
+            claimName: log-claim
+      containers:
+        - name: ping-pong-app
+          image: nepjnq/ping-pong-app:1.0
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: shared-log
+              mountPath: /app/files
+        - name: log-app
+          image: nepjnq/log-app:1.2
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: shared-log
+              mountPath: /app/files
