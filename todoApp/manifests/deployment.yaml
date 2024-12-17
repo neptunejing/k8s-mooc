@@ -15,11 +15,19 @@ spec:
       labels:
         app: todo-app
     spec:
+      volumes:
+        - name: todo-pv
+          persistentVolumeClaim:
+            claimName: todo-claim
       containers:
         - name: todo-app
-          image: todo-app:1.0
-          imagePullPolicy: Never
+          image: nepjnq/todo-app:1.1
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: todo-pv
+              mountPath: /app/files
           env:
+            - name: CACHE_DIR
+              value: "/app/files"
             - name: PORT
               value: "8080"
-      
