@@ -1,23 +1,24 @@
 package com.nanqing.todoapp.controller;
 
 import com.nanqing.todoapp.service.ImageService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 @Controller
 @RequestMapping("/todo")
 public class RequestController {
@@ -25,34 +26,36 @@ public class RequestController {
     @Autowired
     private ImageService imageService;
 
+    private final RestTemplate restTemplate = new RestTemplate();
+
+    // hardcoded backend URL
+    private final String backendURL = "http://localhost:8081/todo-api";
+
     @GetMapping("")
     public String getTodoPage(Model model) throws IOException {
         String imageUrl = imageService.getCachedImage();
         model.addAttribute("imageUrl", imageUrl);
 
-        // hardcoded todos
-        List<String> todos = Arrays.asList("TODO 1", "TODO 2");
+        List<String> todos = null;
+        try {
+            ResponseEntity<String[]> responseEntity = restTemplate.getForEntity(backendURL, String[].class);
+            todos = (responseEntity.getBody() != null)
+                    ? Arrays.asList(responseEntity.getBody())
+                    : null;
+        } catch (Exception e) {
+            log.error("Get todo list failed. ", e);
+        }
         model.addAttribute("todos", todos);
-
         return "todo";
     }
 
+    @PostMapping("/add")
+    public String addTodo(String todoContent) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.TEXT_PLAIN);
+        HttpEntity<String> requestEntity = new HttpEntity<>(todoContent, headers);
+        restTemplate.postForEntity(backendURL, requestEntity, Void.class);
 
-//    @GetMapping("/images/{filename}")
-//    public ResponseEntity<Resource> getImage(@PathVariable String filename) throws IOException {
-//        Path imagePath = Paths.get(System.getenv("CACHE_DIR")).resolve(filename);
-//        Resource image = new UrlResource(imagePath.toUri());
-//
-//        if (image.exists() && image.isReadable()) {
-//            return ResponseEntity.ok().body(image);
-//        } else {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
-
-    @GetMapping("/port")
-    @ResponseBody
-    public String getPort() {
-        return System.getenv("PORT") != null ? System.getenv("PORT") : "Port not set";
+        return "redirect:/todo";
     }
 }

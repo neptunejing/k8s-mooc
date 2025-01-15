@@ -1,5 +1,6 @@
 package com.nanqing.todoapp.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
 
@@ -9,6 +10,7 @@ import java.net.URL;
 import java.time.Instant;
 
 @Service
+@Slf4j
 public class ImageService {
 
     private static final String CACHE_DIR = System.getenv("CACHE_DIR");
@@ -19,13 +21,14 @@ public class ImageService {
 
     private Instant lastUpdateTime = Instant.MIN;
 
-    public String getCachedImage() throws IOException {
-        System.out.println("CACHE_PATH: " + CACHE_PATH);
-        File cachedImage = new File(CACHE_PATH);
+    private static final File cachedImage;
 
-        System.out.println("Image exists: " + cachedImage.exists());
-        System.out.println("Image can be read: " + cachedImage.canRead());
-        System.out.println("Image absolute path: " + cachedImage.getAbsolutePath());
+    static {
+        cachedImage = new File(CACHE_PATH);
+        log.info("Image absolute path {}", cachedImage.getAbsolutePath());
+    }
+
+    public String getCachedImage() throws IOException {
 
         if (!cachedImage.exists() || isCacheExpired()) {
             downloadImage();

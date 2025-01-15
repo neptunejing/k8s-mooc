@@ -9,10 +9,10 @@
     <img th:src="${{imageUrl}}" alt="Random Image" width="600"/>
 
     <!-- input -->
-    <div>
-        <input type="text" id="todo-input" maxlength="140" placeholder="Enter TODO (max 140 characters)">
-        <button type="button" id="create-todo">Create TODO</button>
-    </div>
+    <form th:action="@{/todo/add}" method="post">
+        <input type="text" name="todoContent" maxlength="140" placeholder="Enter TODO (max 140 characters)">
+        <button type="submit">Create TODO</button>
+    </form>
 
     <!-- todos -->
     <ul>
