@@ -1,2 +1,4 @@
 server:
   port: 8090
+
+ENV_VAR: MESSAGE=hello world

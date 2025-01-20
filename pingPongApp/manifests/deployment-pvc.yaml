@@ -19,6 +19,10 @@ spec:
         - name: shared-log
           persistentVolumeClaim:
             claimName: log-claim
+        - name: config-vol
+          configMap:
+            name: pp-configmap
+
       containers:
         - name: ping-pong-app
           image: nepjnq/ping-pong-app:1.0
@@ -26,9 +30,16 @@ spec:
           volumeMounts:
             - name: shared-log
               mountPath: /app/files
+
         - name: log-app
-          image: nepjnq/log-app:1.2
+          image: nepjnq/log-app:1.3
           imagePullPolicy: Always
           volumeMounts:
             - name: shared-log
               mountPath: /app/files
+            - name: config-vol
+              mountPath: /app/config
+
+          envFrom:
+            - configMapRef:
+                name: pp-configmap
