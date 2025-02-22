@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: pingPongApp
+  datasource:
+#    url: jdbc:postgresql://localhost:5432/pingpong_db
+    url: jdbc:postgresql://postgres-0.postgres:5432/pingpong_db
+    username: pingpong_user
+    password: secret
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
