@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: todo-svc
+  labels:
+    app: todo-svc
+spec:
+  ports:
+    - port: 8085
+      name: frontend
+    - port: 8090
+      name: backend
+  clusterIP: None
+  selector:
+    app: todo-app
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: todo-app
+spec:
+  serviceName: "todo-svc"
+  selector:
+    matchLabels:
+      app: todo-app
+  template:
+    metadata:
+      labels:
+        app: todo-app
+    spec:
+      containers:
+        - name: todo-backend
+          image: nepjnq/todo-backend:1.1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8090
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://postgres:5432/tododb"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "todo"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: "todo"
+        - name: todo-frontend
+          image: nepjnq/todo-frontend:1.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8085
+
+
