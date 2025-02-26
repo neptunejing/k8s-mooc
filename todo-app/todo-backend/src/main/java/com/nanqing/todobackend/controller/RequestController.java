@@ -22,6 +22,10 @@ public class RequestController {
 
     @PostMapping("")
     public void addTodoItem(@RequestBody String todoContent) {
+        if (todoContent.length() > 140) {
+            log.error("Todo content over 140 characters!");
+            return;
+        }
         todoService.addTodo(todoContent);
         log.info("Todo added: {}", todoContent);
     }
