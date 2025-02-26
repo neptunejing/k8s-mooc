@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: wiki-todo-job
+spec:
+  schedule: "0 * * * *" #	Run every hour
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: wiki-todo
+              image: curlimages/curl:latest
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  RANDOM_URL=$(curl -Ls -o /dev/null -w %{url_effective} https://en.wikipedia.org/wiki/Special:Random)
+                  echo "Posting to /todo-api: $RANDOM_URL"
+                  curl -X POST "http://todo-svc:8090/todo-api" \
+                    -H "Content-Type: text/plain" \
+                    -d "$RANDOM_URL"
